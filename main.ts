@@ -34,7 +34,11 @@ export async function getSoundcloudClientId() {
         searching this property: client_id:"CLIENT_ID". then removing name of 
         the property (client_id) and syntax garbage (quotes, comma and colon)
     */
-    const clientIdStart = scriptContent.indexOf(CLIENT_ID_OCCURRENCE) + CLIENT_ID_OCCURRENCE.length
+    const clientIdOccurrenceStart = scriptContent.indexOf(CLIENT_ID_OCCURRENCE)
+    if(clientIdOccurrenceStart === -1) {
+        throw new Error('Failed to find client id')
+    }
+    const clientIdStart = clientIdOccurrenceStart + CLIENT_ID_OCCURRENCE.length
 
     return scriptContent.substring(
         clientIdStart, 
