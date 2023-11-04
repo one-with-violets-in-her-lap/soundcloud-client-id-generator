@@ -43,5 +43,5 @@ export async function getSoundcloudClientId() {
     return scriptContent.substring(
         clientIdStart, 
         scriptContent.indexOf('\"', clientIdStart)
-    );
+    )
 }
