@@ -1,0 +1,19 @@
+{
+  "name": "soundcloud-client-id-generator",
+  "version": "0.0.1",
+  "description": "get soundcloud client_id query parameter for using its api",
+  "main": "./dist/main.js",
+  "scripts": {
+    "test": "echo \"im NOT writing tests\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/crucials/soundcloud-client-id-generator.git"
+  },
+  "author": "crucials",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/crucials/soundcloud-client-id-generator/issues"
+  },
+  "homepage": "https://github.com/crucials/soundcloud-client-id-generator#readme"
+}
