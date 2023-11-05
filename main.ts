@@ -1,4 +1,5 @@
 import { parse } from 'node-html-parser'
+import fetch from 'node-fetch'
 
 const CLIENT_ID_OCCURRENCE = ',client_id:\"'
 
