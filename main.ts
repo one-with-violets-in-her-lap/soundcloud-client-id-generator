@@ -1,7 +1,7 @@
 import { parse } from 'node-html-parser'
 import fetch from 'node-fetch'
 
-const CLIENT_ID_OCCURRENCE = ',client_id:\"'
+const CLIENT_ID_OCCURRENCE = '{client_id:\"'
 
 export async function getSoundcloudClientId() {
     const response = await fetch('https://soundcloud.com')
