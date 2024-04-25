@@ -1,48 +1,93 @@
 import { parse } from 'node-html-parser'
 import fetch from 'node-fetch'
 
-const CLIENT_ID_OCCURRENCE = '{client_id:\"'
+const CLIENT_ID_OCCURRENCES = [ '{client_id:\"', 'client_id: \"', '\"client_id=' ]
+const POTENTIAL_NEEDED_URL_START = 'https://a-v2.sndcdn.com/assets/0-'
+
+export class FailedToGetClientIdError extends Error {
+    constructor(explanation: string) {
+        super(explanation)
+    }
+}
 
 export async function getSoundcloudClientId() {
     const response = await fetch('https://soundcloud.com')
     
     if(!response.ok) {
-        throw new Error('Failed to parse Soundcloud page, error code :' + response.status)
+        throw new FailedToGetClientIdError('Failed to parse Soundcloud page, error code :'
+            + response.status)
     }
 
     const document = parse(await response.text())
 
-    const scriptWithClientId = document.getElementsByTagName('script').find(script => {
+    const scripts = document.getElementsByTagName('script')
+
+    const potentialNeededScript = scripts.find(script => {
         const src = script.getAttribute('src')
 
-        return src?.startsWith('https://a-v2.sndcdn.com/assets/50-')
+        return src?.startsWith(POTENTIAL_NEEDED_URL_START)
             && src?.endsWith('.js')
-    })?.getAttribute('src')
+    })
 
-    if(!scriptWithClientId) {
-        throw new Error('Couldn\'t find client id in Soundcloud scripts')
+    const otherScripts = scripts.filter(script =>
+        script.getAttribute('src') !== potentialNeededScript?.getAttribute('src'))
+        
+    let clientId: string | undefined = undefined
+    for(const script of [
+        potentialNeededScript,
+        ...otherScripts,
+    ]) {        
+        if(!script) {
+            continue
+        }
+
+        const scriptSrc = script.getAttribute('src')
+        
+        if(!scriptSrc) {
+            continue
+        }
+
+        try {
+            clientId = await findClientIdInScript(scriptSrc)
+            break
+        }
+        catch(error) {}
     }
 
-    const scriptContentResponse = await fetch(scriptWithClientId)
+    return clientId
+}
+
+async function findClientIdInScript(scriptUrl: string) {
+    const scriptContentResponse = await fetch(scriptUrl)
 
     if(!scriptContentResponse.ok) {
-        throw new Error('Failed to get Soundcloud script content, error code :' + response.status)
+        throw new Error('failed to get Soundcloud script content, error code :'
+            + scriptContentResponse.status)
     }
 
     const scriptContent = await scriptContentResponse.text()
 
-    /*
-        searching this property: client_id:"CLIENT_ID". then removing name of 
-        the property (client_id) and syntax garbage (quotes, comma and colon)
-    */
-    const clientIdOccurrenceStart = scriptContent.indexOf(CLIENT_ID_OCCURRENCE)
-    if(clientIdOccurrenceStart === -1) {
-        throw new Error('Failed to find client id')
-    }
-    const clientIdStart = clientIdOccurrenceStart + CLIENT_ID_OCCURRENCE.length
+    for(const occurrence of CLIENT_ID_OCCURRENCES) {
+        /*
+            searching this property: client_id:"CLIENT_ID". then removing name of 
+            the property (client_id) and syntax garbage (quotes, comma and colon)
+        */
 
-    return scriptContent.substring(
-        clientIdStart, 
-        scriptContent.indexOf('\"', clientIdStart)
-    )
+        const clientIdOccurrenceStart = scriptContent.indexOf(occurrence)
+        if(clientIdOccurrenceStart === -1) {
+            throw new Error('failed to find client id')
+        }
+        const clientIdStart = clientIdOccurrenceStart + occurrence.length
+
+        return scriptContent.substring(
+            clientIdStart, 
+            scriptContent.indexOf('\"', clientIdStart)
+        )
+    }
+
+    throw new Error('failed to find client id')
 }
+
+getSoundcloudClientId().then(c => {
+    console.log(c)
+})
