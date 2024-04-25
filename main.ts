@@ -10,6 +10,14 @@ export class FailedToGetClientIdError extends Error {
     }
 }
 
+/**
+ * gets the client id from soundcloud js scripts (https://a-v2.sndcdn.com/assets/...)
+ * 
+ * performs first search in the most likely location, if client id is not found here,
+ * searches in other scripts and takes some time
+ * 
+ * @throws {FailedToGetClientIdError}
+ */
 export async function getSoundcloudClientId() {
     const response = await fetch('https://soundcloud.com')
     
@@ -52,6 +60,12 @@ export async function getSoundcloudClientId() {
             break
         }
         catch(error) {}
+    }
+
+    if(!clientId) {
+        throw new FailedToGetClientIdError('client id is not found in any '
+            + 'of soundcloud website\'s scripts. client id location has been probably'
+            + 'changed. open an issue on github')
     }
 
     return clientId
