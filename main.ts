@@ -101,7 +101,3 @@ async function findClientIdInScript(scriptUrl: string) {
 
     throw new Error('failed to find client id')
 }
-
-getSoundcloudClientId().then(c => {
-    console.log(c)
-})
