@@ -45,7 +45,3 @@ export async function getSoundcloudClientId() {
 
     throw new FailedToGetClientIdError('client id cant be found')
 }
-
-getSoundcloudClientId().then(clientId => {
-    console.log(clientId)
-})
