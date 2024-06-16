@@ -23,7 +23,6 @@
   },
   "homepage": "https://github.com/crucials/soundcloud-client-id-generator#readme",
   "dependencies": {
-    "node-fetch": "^3.3.2",
-    "node-html-parser": "^6.1.11"
+    "node-fetch": "^3.3.2"
   }
 }
