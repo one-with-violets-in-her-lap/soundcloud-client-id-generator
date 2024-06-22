@@ -9,10 +9,26 @@ export class FailedToGetClientIdError extends Error {
 /**
  * gets the client id from https://m.soundcloud.com/
  * 
+ * @param proxyUrlToPrepend proxy url to add before soundcloud website url
+ * to fetch page contents. empty string by default
+ * @param fetchSoundcloudPage custom logic to fetch html of soundcloud page from given url
+ * with some customization like proxy.
+ * **use wisely and return native fetch response object**
+ * 
  * @throws {FailedToGetClientIdError}
  */
-export async function getSoundcloudClientId() {
-    const response = await fetch('https://m.soundcloud.com')
+export async function getSoundcloudClientId(
+    proxyUrlToPrepend = '',
+    fetchSoundcloudPage?: (url: string) => Promise<Response>
+) {
+    let response: Response
+
+    if(fetchSoundcloudPage) {
+        response = await fetchSoundcloudPage('https://m.soundcloud.com')
+    }
+    else {
+        response = await fetch(proxyUrlToPrepend + 'https://m.soundcloud.com')
+    }
     
     if(!response.ok) {
         throw new FailedToGetClientIdError('failed to request soundcloud page for client '
