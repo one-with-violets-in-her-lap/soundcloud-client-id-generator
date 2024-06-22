@@ -21,8 +21,5 @@
   "bugs": {
     "url": "https://github.com/crucials/soundcloud-client-id-generator/issues"
   },
-  "homepage": "https://github.com/crucials/soundcloud-client-id-generator#readme",
-  "dependencies": {
-    "node-fetch": "^3.3.2"
-  }
+  "homepage": "https://github.com/crucials/soundcloud-client-id-generator#readme"
 }
