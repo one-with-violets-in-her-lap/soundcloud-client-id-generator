@@ -1,6 +1,3 @@
-import fetch from 'node-fetch'
-
-
 const CLIENT_ID_OCCURRENCES = ['"clientId":"']
 
 export class FailedToGetClientIdError extends Error {
