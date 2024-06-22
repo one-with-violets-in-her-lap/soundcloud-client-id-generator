@@ -1,2 +1,5 @@
 build
 node_modules
+
+browser-test
+do.txt
