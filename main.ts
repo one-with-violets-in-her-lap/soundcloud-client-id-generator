@@ -16,11 +16,6 @@ export class FailedToGetClientIdError extends Error {
  */
 export async function getSoundcloudClientId() {
     const response = await fetch('https://m.soundcloud.com')
-    
-    if(!response.ok) {
-        throw new FailedToGetClientIdError('failed to request soundcloud page for client '
-            + `id, error code: ${response.status}`)
-    }
 
     const pageHtml = await response.text()
 
